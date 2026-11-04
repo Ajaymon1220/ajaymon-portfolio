@@ -1,0 +1,1 @@
+{"name":"davemiye-reference-replica","private":true,"type":"module","scripts":{"dev":"node serve.mjs","check":"node check.mjs"}}
