@@ -3,9 +3,11 @@
   const base = '/profile/mascot/';
   class AjayMascot extends HTMLElement {
     connectedCallback() {
-      if (this.shadowRoot) return;
-      const root = this.attachShadow({mode:'open'});
-      root.innerHTML = `<style>
+      // Next.js moves streamed nodes into place, causing disconnect/reconnect.
+      // Reuse the shadow DOM, but always restore listeners after a disconnect.
+      if (this.abort && !this.abort.signal.aborted) return;
+      const root = this.shadowRoot || this.attachShadow({mode:'open'});
+      if (!this.face) root.innerHTML = `<style>
         :host{display:block;aspect-ratio:1;position:relative;contain:layout style}
         button{display:block;width:100%;height:100%;padding:0;border:0;border-radius:25%;background:transparent;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
         button:focus-visible{outline:2px solid var(--accent,#e75636);outline-offset:5px}
@@ -19,7 +21,7 @@
       this.abort = new AbortController();
       const options = {signal:this.abort.signal};
       this.motion = matchMedia('(prefers-reduced-motion: reduce)');
-      this.pointer = matchMedia('(pointer: fine)');
+      this.pointer = matchMedia('(any-pointer: fine)');
       this.visible = true;
       this.reaction = false;
       this.frame = 4;
@@ -43,7 +45,7 @@
           const sector = (Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8;
           this.paint([5,8,7,6,3,0,1,2][sector]);
         });
-      }, {...options,passive:true});
+      }, {...options,passive:true,capture:true});
       document.documentElement.addEventListener('pointerleave', () => {if(!this.reaction)this.paint(4)}, options);
       document.addEventListener('visibilitychange', () => {if(document.hidden)this.reset()}, options);
       this.motion.addEventListener('change', () => this.reset(), options);

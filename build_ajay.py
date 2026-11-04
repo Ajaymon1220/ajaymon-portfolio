@@ -499,7 +499,7 @@ def sanitize(doc):
     doc = re.sub(r'<svg([^>]*viewbox="0 0 400 400"[^>]*)>.*?</svg>', mascot, doc, flags=re.S)
     doc = re.sub(r'<svg([^>]*class="footer-scene[^"]*"[^>]*)>.*?</svg>', lambda m: art(m, "footer"), doc, flags=re.S)
     doc = re.sub(r'<img[^>]*src="/profile/art/avatar.svg"[^>]*>', lambda m: '<ajay-mascot class="' + re.search(r'class="([^"]*)"', m.group(0)).group(1) + '"></ajay-mascot>', doc)
-    doc = doc.replace('</head>', '<style>ajay-mascot{display:block;aspect-ratio:1;height:auto}</style><script src="/mascot.js"></script></head>')
+    doc = doc.replace('</head>', '<style>ajay-mascot{display:block;aspect-ratio:1;height:auto}</style><script src="/mascot.js?v=2"></script></head>')
     return doc
 
 
