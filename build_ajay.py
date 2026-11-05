@@ -447,6 +447,9 @@ def scrub_tree(x):
             if x[1] == "svg" and "signature" in props.get("className", ""):
                 props.update({"viewBox": SIGNATURE_VIEWBOX, "strokeWidth": SIGNATURE_STROKE,
                               "children": [["$", "path", str(i), {"d": d}] for i, d in enumerate(SIGNATURE_PATHS)]})
+            if isinstance(props.get("children"), str) and props["children"] in ("Work", "About"):
+                if props.get("href") in ("/#work", "/#intro"):
+                    props["href"] = "/work" if props["children"] == "Work" else "/about"
             if x[1] == "$L18":  # Vercel Analytics sits in a Suspense boundary; keep the boundary so hydration matches
                 return ["$", "$Sreact.suspense", None, {"children": None}]
             if x[1] in TRACKERS and (x[1] != "$L17" or props.get("id") == "clarity"):
@@ -508,6 +511,9 @@ def sanitize(doc):
         attrs = re.sub(r'stroke-width="[^"]*"', 'stroke-width="' + str(SIGNATURE_STROKE) + '"', attrs)
         return '<svg' + attrs + '>' + ''.join('<path d="' + d + '"></path>' for d in SIGNATURE_PATHS) + '</svg>'
     doc = re.sub(r'<svg([^>]*class="(?:header|preloader)-signature"[^>]*)>.*?</svg>', signature_markup, doc, flags=re.S)
+    doc = re.sub(r'(<a[^>]*href=")/#work("[^>]*>Work</a>)', r'\1/work\2', doc)
+    doc = re.sub(r'(<a[^>]*href=")/#intro("[^>]*>About</a>)', r'\1/about\2', doc)
+    doc = doc.replace('</head>', '<link rel="stylesheet" href="/pages.css"/></head>')
     doc = doc.replace('/personalize.css', '/personalize.css?v=3')
     doc = re.sub(r"/profile/art/footer-scene\.svg(?:\?v=\d+)?", "/profile/art/footer-scene.svg?v=2", doc)
     doc = doc.replace('</head>', '<style>ajay-mascot{display:block;aspect-ratio:1;height:auto}</style><script src="/mascot.js?v=2"></script></head>')
@@ -751,6 +757,8 @@ def main():
     print("wrote dist/index.html")
     (DIST / "playground" / "index.html").write_text(sanitize(build_playground((TEMPLATES / "playground.html").read_text())))
     print("wrote dist/playground/index.html")
+    from build_pages import write_pages
+    write_pages((DIST / "index.html").read_text())
 
 
 if __name__ == "__main__":
