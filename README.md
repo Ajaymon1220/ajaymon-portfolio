@@ -39,4 +39,10 @@ Phone-only refinements are appended to `dist/personalize.css` by the build (`MOB
 
 ## Run
 
-From the repository root: `npm run dev` (http://127.0.0.1:5173), `npm run check`, `npm run build`.
+From this repository root:
+
+- `npm run dev`: preview at http://127.0.0.1:5174
+- `npm run check`: validate pages, scripts and local assets
+- `python3 build_ajay.py`: regenerate pages after content edits
+
+The ready-to-serve website is committed in `dist/`; no dependency installation is needed for preview or validation (Node.js is required).

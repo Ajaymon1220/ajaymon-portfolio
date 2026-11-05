@@ -165,7 +165,7 @@ PROJECTS = [
 PLAYGROUND = [
     ("invoice/overview.png", 2048, 1004, "Karbon invoice confirmation with a shareable payment link", "karbon-invoice-flow"),
     ("invoice/flow.png", 2048, 1294, "Choosing a payment request type beside the invoice preview", "karbon-invoice-flow"),
-    ("invoice/details.png", 2048, 1375, "Invoice setup with the document taking shape alongside", "karbon-invoice-flow"),
+    ("playground/countryside-footer.svg", 1600, 1000, "Slowly, thoughtfully — Ajaymon’s animated countryside footer study", "footer-study"),
     ("taxos/overview.png", 2048, 1362, "TaxOS CPA workspace with client preparation progress", "taxos"),
     ("taxos/dashboard.png", 2048, 1362, "TaxOS client documents grouped by type and status", "taxos"),
     ("taxos/workflow.png", 2048, 1024, "TaxOS dashboard with returns, clients and agenda", "taxos"),
