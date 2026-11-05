@@ -485,6 +485,7 @@ def sanitize(doc):
         body = body.replace("https://davemiye.com/opengraph-image.jpg?opengraph-image.2ovl3d9tkf34i.jpg", "/profile/ajaymon-portrait.png")
         rows.append((rid, body, is_text))
     doc = write_payload(doc, join_rows(rows))
+    doc = doc.replace("/replica-runtime.js", "/replica-runtime.js?v=2")
     for old, new in TEXT_FIXES:
         doc = doc.replace(old, new).replace(html.escape(old), html.escape(new))
     doc = re.sub(r'https://davemiye\.com/(?:opengraph|twitter)-image\.jpg(?:\?[^"\\]*)?', "/profile/ajaymon-portrait.png", doc)
@@ -514,7 +515,7 @@ def sanitize(doc):
     doc = re.sub(r'(<a[^>]*href=")/#work("[^>]*>Work</a>)', r'\1/work\2', doc)
     doc = re.sub(r'(<a[^>]*href=")/#intro("[^>]*>About</a>)', r'\1/about\2', doc)
     doc = doc.replace('</head>', '<link rel="stylesheet" href="/pages.css"/></head>')
-    doc = doc.replace('/personalize.css', '/personalize.css?v=3')
+    doc = doc.replace('/personalize.css', '/personalize.css?v=4')
     doc = re.sub(r"/profile/art/footer-scene\.svg(?:\?v=\d+)?", "/profile/art/footer-scene.svg?v=2", doc)
     doc = doc.replace('</head>', '<style>ajay-mascot{display:block;aspect-ratio:1;height:auto}</style><script src="/mascot.js?v=2"></script></head>')
     return doc
@@ -553,6 +554,8 @@ def patch_chunks():
                 continue
             end = re.compile(r'\}\]\)\}(?=,\d+(?:,\d+)*,e=>\{|\]\))').search(s, start)
             s = s[:start] + replacement + s[end.end():]
+        # Full document page switches share the intro skip decision made before first paint.
+        s = s.replace('let m=()=>s.f.movedBetweenPages;', 'let m=()=>!!window.__ajaySkipIntro||s.f.movedBetweenPages;')
         # A failed/cancelled animation must never leave the page covered or scroll locked.
         s = s.replace('})().catch(e=>{if(!r)throw e}),', '})().catch(e=>{if(!r){u();delete t.dataset.preloader;p(!0);(0,i.i)()}}),')
         # The contact note's send step was a stub that always fell back to the visitor's mail app.

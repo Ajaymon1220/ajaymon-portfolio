@@ -1,3 +1,4 @@
+html[data-skip-intro="true"] .preloader{display:none!important}
 .hello-word{line-height:1.35!important}.hello-language{white-space:nowrap}
 /* ajaymon-mobile: phone-only refinements; desktop (768px+) is untouched */
 @media (max-width:767px){
