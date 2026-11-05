@@ -12,6 +12,7 @@ import html
 import json
 import re
 import shutil
+from signature import PATHS as SIGNATURE_PATHS, VIEWBOX as SIGNATURE_VIEWBOX, STROKE as SIGNATURE_STROKE
 from pathlib import Path
 
 from site_content import CONTACT_EMAIL, PLAYGROUND, PROJECTS, SITE
@@ -443,6 +444,9 @@ def scrub_tree(x):
     if isinstance(x, list):
         if len(x) == 4 and x[0] == "$" and isinstance(x[1], str):
             props = x[3] if isinstance(x[3], dict) else {}
+            if x[1] == "svg" and "signature" in props.get("className", ""):
+                props.update({"viewBox": SIGNATURE_VIEWBOX, "strokeWidth": SIGNATURE_STROKE,
+                              "children": [["$", "path", str(i), {"d": d}] for i, d in enumerate(SIGNATURE_PATHS)]})
             if x[1] == "$L18":  # Vercel Analytics sits in a Suspense boundary; keep the boundary so hydration matches
                 return ["$", "$Sreact.suspense", None, {"children": None}]
             if x[1] in TRACKERS and (x[1] != "$L17" or props.get("id") == "clarity"):
@@ -499,12 +503,18 @@ def sanitize(doc):
     doc = re.sub(r'<svg([^>]*viewbox="0 0 400 400"[^>]*)>.*?</svg>', mascot, doc, flags=re.S)
     doc = re.sub(r'<svg([^>]*class="footer-scene[^"]*"[^>]*)>.*?</svg>', lambda m: art(m, "footer"), doc, flags=re.S)
     doc = re.sub(r'<img[^>]*src="/profile/art/avatar.svg"[^>]*>', lambda m: '<ajay-mascot class="' + re.search(r'class="([^"]*)"', m.group(0)).group(1) + '"></ajay-mascot>', doc)
+    def signature_markup(m):
+        attrs = re.sub(r'viewbox="[^"]*"', 'viewbox="' + SIGNATURE_VIEWBOX + '"', m.group(1))
+        attrs = re.sub(r'stroke-width="[^"]*"', 'stroke-width="' + str(SIGNATURE_STROKE) + '"', attrs)
+        return '<svg' + attrs + '>' + ''.join('<path d="' + d + '"></path>' for d in SIGNATURE_PATHS) + '</svg>'
+    doc = re.sub(r'<svg([^>]*class="(?:header|preloader)-signature"[^>]*)>.*?</svg>', signature_markup, doc, flags=re.S)
+    doc = doc.replace('/personalize.css', '/personalize.css?v=3')
     doc = doc.replace('</head>', '<style>ajay-mascot{display:block;aspect-ratio:1;height:auto}</style><script src="/mascot.js?v=2"></script></head>')
     return doc
 
 
 MASCOT_MODULE = (',482852,e=>{"use strict";var t=e.i(843476);e.s(["f",0,function(e){let{viewBox:a,fill:n,...r}=e;'
-                 'return(0,t.jsx)("ajay-mascot",{className:r.className})}])}')
+                 'return(0,t.jsx)("ajay-mascot",{...r})}])}')
 FOOTER_MODULE = (',345545,e=>{"use strict";var t=e.i(843476);e.s(["FooterScene",0,function({className:e}){'
                  'return(0,t.jsx)("img",{src:"/profile/art/footer-scene.svg",alt:"",draggable:!1,width:620,height:322,"aria-hidden":"true",className:e})}])}')
 
@@ -520,16 +530,24 @@ def send_note_js(fn, note, sender, trap, started):
             f'catch(e){{return"mail-app"}}}}')
 
 
+SIGNATURE_MODULE = (',291390,e=>{"use strict";var t=e.i(843476);let r=' + json.dumps(SIGNATURE_PATHS) +
+    ';e.s(["f",0,function(e){return(0,t.jsx)("svg",{viewBox:' + json.dumps(SIGNATURE_VIEWBOX) +
+    ',fill:"none",stroke:"currentColor",strokeWidth:' + str(SIGNATURE_STROKE) +
+    ',strokeLinecap:"round",strokeLinejoin:"round",role:"img","aria-label":"Ajaymon",...e,children:r.map((e,i)=>(0,t.jsx)("path",{d:e},i))})}])}')
+
+
 def patch_chunks():
     """Swap Dave Miye's drawn mascot and footer scene for image slots holding Ajaymon's own art."""
     for f in (DIST / "_next/static/immutable/chunks").glob("*.js"):
         s = original = f.read_text()
-        for mod, replacement in (("482852", MASCOT_MODULE), ("345545", FOOTER_MODULE)):
+        for mod, replacement in (("482852", MASCOT_MODULE), ("345545", FOOTER_MODULE), ("291390", SIGNATURE_MODULE)):
             start = s.find(f",{mod},e=>{{")
             if start < 0 or s.startswith(replacement, start):
                 continue
             end = re.compile(r'\}\]\)\}(?=,\d+(?:,\d+)*,e=>\{|\]\))').search(s, start)
             s = s[:start] + replacement + s[end.end():]
+        # A failed/cancelled animation must never leave the page covered or scroll locked.
+        s = s.replace('})().catch(e=>{if(!r)throw e}),', '})().catch(e=>{if(!r){u();delete t.dataset.preloader;p(!0);(0,i.i)()}}),')
         # The contact note's send step was a stub that always fell back to the visitor's mail app.
         s = re.sub(r'async function (\w+)\((\w+),(\w+),(\w+),(\w+)\)\{return"mail-app"\}',
                    lambda m: send_note_js(*m.groups()), s)
