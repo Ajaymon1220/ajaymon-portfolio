@@ -1,1 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 322"><rect x="8" y="8" width="604" height="306" rx="24" fill="none" stroke="#8d8a84" stroke-width="3" stroke-dasharray="12 10"/><text x="310" y="168" text-anchor="middle" font-family="system-ui,sans-serif" font-size="22" fill="#8d8a84">your footer illustration · 620 × 322</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 322" fill="none">
+  <title>Ajaymon’s desk — a little design, a little coffee</title>
+  <style>
+    .line{stroke:#929087;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+    .fine{stroke-width:1.5}
+    .steam{animation:steam 3.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+    .second{animation-delay:-1.9s}
+    @keyframes steam{0%,100%{opacity:.3;transform:translateY(3px)}50%{opacity:.8;transform:translateY(-6px)}}
+    @media(prefers-reduced-motion:reduce){.steam{animation:none}}
+  </style>
+  <g class="line">
+    <!-- The slightly uneven baseline keeps the scene feeling drawn on paper. -->
+    <path d="M31 257 Q182 254 310 258 T589 256"/>
+    <path class="fine" opacity=".4" d="M76 267 L195 268 M413 269 L552 267"/>
+    <!-- Open laptop and a small interface on the screen. -->
+    <path d="M174 229 L155 109 Q154 102 163 102 L365 105 Q374 105 375 113 L390 230"/>
+    <path d="M167 114 L184 220 L378 222 L363 116 Z"/>
+    <path d="M174 229 L143 250 Q141 254 150 255 L416 255 Q423 254 418 250 L390 230 Z"/>
+    <path class="fine" d="M189 236 L379 237 M182 242 L390 243 M257 245 L305 245 L311 251 L251 251 Z"/>
+    <circle cx="265" cy="110" r="1" fill="#929087" stroke="none"/>
+    <path class="fine" d="M179 131 L359 133 M185 142 L223 143 L232 207 L194 206 Z"/>
+    <path stroke="#637dc0" d="M240 145 L345 146 L349 171 L244 170 Z"/>
+    <path class="fine" d="M247 181 L286 182 L290 207 L251 206 Z M299 182 L349 183 M300 190 L342 191 M301 198 L331 199"/>
+    <path stroke="#c56d58" d="M197 154 L215 154 M198 162 L211 162"/>
+    <path class="fine" d="M201 181 L217 181 M202 189 L213 189"/>
+    <!-- Coffee cup, saucer and animated wisps of steam. -->
+    <ellipse cx="93" cy="249" rx="39" ry="6"/>
+    <path d="M65 204 Q64 244 89 246 Q113 247 116 205"/>
+    <ellipse cx="91" cy="204" rx="26" ry="7"/>
+    <path class="fine" stroke="#c56d58" d="M72 205 Q91 199 109 205"/>
+    <path d="M116 212 C144 201 140 237 112 234"/>
+    <path class="steam fine" d="M83 187 C70 173 94 164 83 148"/>
+    <path class="steam second fine" d="M101 188 C89 177 109 169 102 158"/>
+    <!-- Sketchbook, pencil and an idea in the margin. -->
+    <path d="M398 221 L469 210 L504 242 L427 253 Z"/>
+    <path class="fine" d="M402 227 L427 249 L500 239 M426 217 L451 244 M440 219 L467 216 M447 226 L477 222"/>
+    <path stroke="#637dc0" d="M434 232 L449 228 L459 236 L446 239 Z"/>
+    <path stroke="#c56d58" d="M465 199 L496 224 L502 225 L500 219 L469 194 Z"/>
+    <!-- A plant growing beside the work. -->
+    <path d="M526 211 L534 254 L567 254 L575 211 Z"/>
+    <path class="fine" d="M525 218 L575 218 M539 227 L542 248 M551 227 L551 248 M564 227 L561 248"/>
+    <path d="M549 210 C547 176 555 154 555 138"/>
+    <path stroke="#83957a" d="M551 186 C530 188 516 170 518 159 C536 158 550 172 551 186 Z M553 170 C571 171 584 154 583 144 C568 144 553 156 553 170 Z M555 148 C541 145 538 126 545 117 C558 121 562 135 555 148 Z"/>
+    <!-- A loose idea card and a few small sparks. -->
+    <path class="fine" d="M402 113 L440 105 L449 143 L411 150 Z"/>
+    <path stroke="#c56d58" d="M416 124 L423 130 L434 115"/>
+    <path class="fine" d="M459 91 L461 81 M467 96 L477 92 M453 84 L448 78"/>
+    <path stroke="#637dc0" d="M118 105 L120 94 L123 104 L133 107 L122 110 L119 120 L117 110 L108 107 Z"/>
+  </g>
+</svg>

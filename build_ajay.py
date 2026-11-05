@@ -437,7 +437,7 @@ def vw(x):
 # ---------------------------------------------------------------- whole-site sanitising
 
 TRACKERS = {"$L17", "$L18", "$L19"}  # Clarity <Script>, Vercel Analytics, SanityLive (same ids on every page)
-ART = {"avatar": ("/profile/art/avatar.svg", 400, 400), "footer": ("/profile/art/footer-scene.svg", 620, 322)}
+ART = {"avatar": ("/profile/art/avatar.svg", 400, 400), "footer": ("/profile/art/footer-scene.svg?v=2", 620, 322)}
 
 
 def scrub_tree(x):
@@ -509,6 +509,7 @@ def sanitize(doc):
         return '<svg' + attrs + '>' + ''.join('<path d="' + d + '"></path>' for d in SIGNATURE_PATHS) + '</svg>'
     doc = re.sub(r'<svg([^>]*class="(?:header|preloader)-signature"[^>]*)>.*?</svg>', signature_markup, doc, flags=re.S)
     doc = doc.replace('/personalize.css', '/personalize.css?v=3')
+    doc = re.sub(r"/profile/art/footer-scene\.svg(?:\?v=\d+)?", "/profile/art/footer-scene.svg?v=2", doc)
     doc = doc.replace('</head>', '<style>ajay-mascot{display:block;aspect-ratio:1;height:auto}</style><script src="/mascot.js?v=2"></script></head>')
     return doc
 
@@ -516,7 +517,7 @@ def sanitize(doc):
 MASCOT_MODULE = (',482852,e=>{"use strict";var t=e.i(843476);e.s(["f",0,function(e){let{viewBox:a,fill:n,...r}=e;'
                  'return(0,t.jsx)("ajay-mascot",{...r})}])}')
 FOOTER_MODULE = (',345545,e=>{"use strict";var t=e.i(843476);e.s(["FooterScene",0,function({className:e}){'
-                 'return(0,t.jsx)("img",{src:"/profile/art/footer-scene.svg",alt:"",draggable:!1,width:620,height:322,"aria-hidden":"true",className:e})}])}')
+                 'return(0,t.jsx)("img",{src:"/profile/art/footer-scene.svg?v=2",alt:"",draggable:!1,width:620,height:322,"aria-hidden":"true",className:e})}])}')
 
 
 def send_note_js(fn, note, sender, trap, started):
@@ -561,15 +562,14 @@ ART_SVG = {
                    'stroke="#8d8a84" stroke-width="4" stroke-dasharray="14 12"/><text x="200" y="196" text-anchor="middle" '
                    'font-family="system-ui,sans-serif" font-size="26" fill="#8d8a84">your</text><text x="200" y="228" text-anchor="middle" '
                    'font-family="system-ui,sans-serif" font-size="26" fill="#8d8a84">avatar</text></svg>'),
-    "footer-scene.svg": ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 322"><rect x="8" y="8" width="604" height="306" rx="24" '
-                         'fill="none" stroke="#8d8a84" stroke-width="3" stroke-dasharray="12 10"/><text x="310" y="168" text-anchor="middle" '
-                         'font-family="system-ui,sans-serif" font-size="22" fill="#8d8a84">your footer illustration · 620 × 322</text></svg>'),
+
 }
 
 
 def write_art_placeholders():
     d = DIST / "profile" / "art"
     d.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(ASSETS / "art/footer-scene.svg", d / "footer-scene.svg")
     for name, svg in ART_SVG.items():
         if not (d / name).exists():  # never overwrite art you've dropped in
             (d / name).write_text(svg)
